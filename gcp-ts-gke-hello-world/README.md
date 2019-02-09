@@ -14,8 +14,12 @@ To deploy your infrastructure, follow the below steps.
 1. [Install Node.js version 6 or later](https://nodejs.org/en/download/)
 1. Install a package manager for Node.js, such as [npm](https://www.npmjs.com/get-npm) or [Yarn](https://yarnpkg.com/en/docs/install).
 1. [Install Google Cloud SDK (`gcloud`)](https://cloud.google.com/sdk/docs/downloads-interactive)
-1. Configure Auth Options
-    1. `gcloud` Login
+1. Configure GCP Auth
+
+    Choose **either option** below to configure your local machine with GCP
+    credentials.
+
+    1. Login using `gcloud`
 
         ```bash
         $ gcloud auth login
@@ -58,6 +62,13 @@ After cloning this repo, from this working directory, run these commands:
 	> $ pulumi config set nodeCount 3
 	> $ pulumi config set nodeMachineType n1-standard-2
 	> ```
+    >
+    > Re-running `pulumi up` after these changes will actually create a new
+    > cluster with the desired settings, and then tear down your existing
+    > cluster as Pulumi performs create-before-delete replacements to
+    > declaratively update components and inform its dependents. If you'd
+    > actually like to scale your cluster up / down in-place, using node pools
+    > is the suggested path forward.
 
 1. Stand up the GKE cluster:
 
