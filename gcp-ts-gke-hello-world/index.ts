@@ -2,17 +2,16 @@
 import * as k8s from "@pulumi/kubernetes";
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
-import { clusterConfig } from "./config";
 
 const name = "helloworld";
 
 // Create a GKE cluster
 const cluster = new gcp.container.Cluster(name, {
-    initialNodeCount: clusterConfig.nodeCount,
-    minMasterVersion: clusterConfig.minMasterVersion,
-    nodeVersion: clusterConfig.nodeVersion,
+    initialNodeCount: 2,
+    minMasterVersion: "latest",
+    nodeVersion: "latest",
     nodeConfig: {
-        machineType: clusterConfig.nodeMachineType,
+        machineType: "n1-standard-1",
         oauthScopes: [
             "https://www.googleapis.com/auth/compute",
             "https://www.googleapis.com/auth/devstorage.read_only",
@@ -68,7 +67,7 @@ const clusterProvider = new k8s.Provider(name, {
 const ns = new k8s.core.v1.Namespace(name, {}, { provider: clusterProvider });
 
 // Export the Namespace name
-export const namespaceName = ns.metadata.apply(m => m.name);
+export const namespaceName = ns.metadata.name;
 
 // Create a NGINX Deployment
 const appLabels = { appClass: name };
@@ -103,7 +102,7 @@ const deployment = new k8s.apps.v1.Deployment(name,
 );
 
 // Export the Deployment name
-export const deploymentName = deployment.metadata.apply(m => m.name);
+export const deploymentName = deployment.metadata.name;
 
 // Create a LoadBalancer Service for the NGINX Deployment
 const service = new k8s.core.v1.Service(name,
@@ -124,5 +123,5 @@ const service = new k8s.core.v1.Service(name,
 );
 
 // Export the Service name and public LoadBalancer endpoint
-export const serviceName = service.metadata.apply(m => m.name);
+export const serviceName = service.metadata.name;
 export const servicePublicIP = service.status.apply(s => s.loadBalancer.ingress[0].ip)

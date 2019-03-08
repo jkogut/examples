@@ -1,3 +1,4 @@
+// Copyright 2016-2019, Pulumi Corporation.  All rights reserved.
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
 import * as k8s from "@pulumi/kubernetes";
@@ -24,7 +25,7 @@ export const kubeconfig = cluster.kubeconfig
 const ns = new k8s.core.v1.Namespace(name, {}, { provider: cluster.provider });
 
 // Export the Namespace name
-export const namespaceName = ns.metadata.apply(m => m.name);
+export const namespaceName = ns.metadata.name;
 
 // Create a NGINX Deployment
 const appLabels = { appClass: name };
@@ -59,7 +60,7 @@ const deployment = new k8s.apps.v1.Deployment(name,
 );
 
 // Export the Deployment name
-export const deploymentName = deployment.metadata.apply(m => m.name);
+export const deploymentName = deployment.metadata.name;
 
 // Create a LoadBalancer Service for the NGINX Deployment
 const service = new k8s.core.v1.Service(name,
@@ -80,5 +81,5 @@ const service = new k8s.core.v1.Service(name,
 );
 
 // Export the Service name and public LoadBalancer Endpoint
-export const serviceName = service.metadata.apply(m => m.name);
+export const serviceName = service.metadata.name;
 export const serviceHostname = service.status.apply(s => s.loadBalancer.ingress[0].hostname)
